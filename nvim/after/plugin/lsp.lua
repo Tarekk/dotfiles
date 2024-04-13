@@ -44,6 +44,11 @@ require('lspconfig').pyright.setup {
   },
 }
 
+vim.api.nvim_create_autocmd("bufWritePost", {
+	pattern = "*.py",
+	command = "silent lua vim.lsp.buf.format()"
+})
+
 local cmp = require('cmp')
 local cmp_select = {behavior = cmp.SelectBehavior.Select}
 local cmp_mappings = lsp.defaults.cmp_mappings({

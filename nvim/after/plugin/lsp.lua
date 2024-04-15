@@ -44,10 +44,23 @@ require('lspconfig').pyright.setup {
   },
 }
 
+-- to foramt code on save
 vim.api.nvim_create_autocmd("bufWritePost", {
 	pattern = "*.py",
 	command = "silent lua vim.lsp.buf.format()"
 })
+
+-- to organize imports
+vim.api.nvim_create_autocmd("BufWritePre", {
+   buffer = buffer,
+   callback = function()
+     vim.lsp.buf.code_action({
+       context = { only = { "source.organizeImports" } },
+       apply = true,
+     })
+     vim.wait(100)
+   end,
+ })
 
 local cmp = require('cmp')
 local cmp_select = {behavior = cmp.SelectBehavior.Select}

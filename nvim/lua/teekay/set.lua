@@ -6,6 +6,9 @@ vim.o.guicursor = table.concat({
   "r:hor50-Cursor/lCursor-blinkwait100-blinkon100-blinkoff100"
 }, ",")
 
+-- for global yanking
+vim.o.clipboard='unnamed'
+
 -- for folding
 vim.o.foldcolumn = '1'
 vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value

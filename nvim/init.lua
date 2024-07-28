@@ -1,1 +1,2 @@
-require("teekay")
+require("teekay.core")
+require("teekay.lazy")

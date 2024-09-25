@@ -140,6 +140,28 @@ return {
 					},
 				})
 			end,
+			["pyright"] = function()
+				lspconfig["pyright"].setup({
+					capabilities = capabilities,
+					settings = {
+						python = {
+							analysis = {
+								autoSearchPaths = true,
+								useLibraryCodeForTypes = true,
+								diagnosticMode = "workspace",
+								typeCheckingMode = "basic",
+							},
+						},
+					},
+					before_init = function(_, config)
+						local poetry_venv = vim.fn.trim(vim.fn.system("poetry env info -p 2>/dev/null"))
+						if vim.v.shell_error == 0 and vim.fn.isdirectory(poetry_venv) ~= 0 then
+							config.settings.python.pythonPath = poetry_venv .. "/bin/python"
+							config.settings.python.venvPath = poetry_venv
+						end
+					end,
+				})
+			end,
 		})
 	end,
 }

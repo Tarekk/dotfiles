@@ -178,6 +178,7 @@ return {
 									variableTypes = true,
 									functionReturnTypes = true,
 								},
+								typeCheckingMode = "off",
 							},
 
 							-- Verify venv packages only

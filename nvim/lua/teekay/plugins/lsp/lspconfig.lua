@@ -143,21 +143,61 @@ return {
 			["pyright"] = function()
 				lspconfig["pyright"].setup({
 					capabilities = capabilities,
+					on_attach = on_attach,
 					settings = {
 						python = {
 							analysis = {
-								autoSearchPaths = true,
-								useLibraryCodeForTypes = true,
+								-- Make type checking more strict
+								typeCheckingMode = "strict",
+
+								-- Disable auto-import suggestions for uninstalled packages
+								autoImportCompletions = false,
+
+								-- Be more strict about package checking
+								useLibraryCodeForTypes = false,
+
+								-- Diagnostics for imports
 								diagnosticMode = "workspace",
-								typeCheckingMode = "basic",
+
+								-- Be strict about checking imports
+								diagnosticSeverityOverrides = {
+									reportMissingImports = "error",
+									reportMissingModuleSource = "error",
+								},
+
+								-- Don't guess at package locations
+								autoSearchPaths = false,
+
+								-- Explicitly check import validity
+								reportMissingTypeStubs = "error",
+
+								-- Disable indexing for uninstalled packages
+								indexing = true,
+
+								inlayHints = {
+									variableTypes = true,
+									functionReturnTypes = true,
+								},
 							},
+
+							-- Verify venv packages only
+							venvPath = ".venv",
+							pythonPath = ".venv/bin/python",
 						},
 					},
+
 					before_init = function(_, config)
-						local poetry_venv = vim.fn.trim(vim.fn.system("poetry env info -p 2>/dev/null"))
-						if vim.v.shell_error == 0 and vim.fn.isdirectory(poetry_venv) ~= 0 then
-							config.settings.python.pythonPath = poetry_venv .. "/bin/python"
-							config.settings.python.venvPath = poetry_venv
+						local Path = require("plenary.path")
+						local project_root = config.root_dir
+
+						-- Strictly use .venv
+						local venv_path = Path:new(project_root .. "/.venv/bin/python")
+						if venv_path:exists() then
+							config.settings.python.pythonPath = tostring(venv_path)
+							-- Only add the site-packages from our venv
+							config.settings.python.analysis.extraPaths = {
+								project_root .. "/.venv/lib/python3*/site-packages",
+							}
 						end
 					end,
 				})

@@ -143,62 +143,54 @@ return {
 			["pyright"] = function()
 				lspconfig["pyright"].setup({
 					capabilities = capabilities,
-					on_attach = on_attach,
 					settings = {
 						python = {
-							analysis = {
-								-- Make type checking more strict
-								typeCheckingMode = "strict",
-
-								-- Disable auto-import suggestions for uninstalled packages
-								autoImportCompletions = false,
-
-								-- Be more strict about package checking
-								useLibraryCodeForTypes = false,
-
-								-- Diagnostics for imports
-								diagnosticMode = "workspace",
-
-								-- Be strict about checking imports
-								diagnosticSeverityOverrides = {
-									reportMissingImports = "error",
-									reportMissingModuleSource = "error",
-								},
-
-								-- Don't guess at package locations
-								autoSearchPaths = false,
-
-								-- Explicitly check import validity
-								reportMissingTypeStubs = "error",
-
-								-- Disable indexing for uninstalled packages
-								indexing = true,
-
-								inlayHints = {
-									variableTypes = true,
-									functionReturnTypes = true,
-								},
-								typeCheckingMode = "off",
-							},
-
-							-- Verify venv packages only
+							-- Path to the virtual environment
+							-- This should point to your uv-created venv
 							venvPath = ".venv",
 							pythonPath = ".venv/bin/python",
+
+							analysis = {
+								-- Enable searching in workspace
+								autoSearchPaths = true,
+
+								-- Use library code for types (enables better import resolution)
+								useLibraryCodeForTypes = true,
+
+								-- Check imports across the whole workspace
+								diagnosticMode = "workspace",
+
+								-- Extra paths for module resolution
+								extraPaths = {
+									".", -- Add current directory to path
+									"src", -- Common source directory
+								},
+
+								-- Type checking settings
+								typeCheckingMode = "basic", -- Set to "off", "basic", or "strict" as needed
+
+								-- Import resolution settings
+								diagnosticSeverityOverrides = {
+									-- Make import resolution issues visible
+									reportMissingImports = "error",
+									reportMissingModuleSource = "error",
+									reportMissingTypeStubs = "none",
+								},
+							},
 						},
 					},
-
 					before_init = function(_, config)
-						local Path = require("plenary.path")
-						local project_root = config.root_dir
+						local venv = vim.fn.expand(".venv")
+						if vim.fn.isdirectory(venv) == 1 then
+							local python_path = venv .. "/bin/python"
+							config.settings.python.pythonPath = python_path
 
-						-- Strictly use .venv
-						local venv_path = Path:new(project_root .. "/.venv/bin/python")
-						if venv_path:exists() then
-							config.settings.python.pythonPath = tostring(venv_path)
-							-- Only add the site-packages from our venv
-							config.settings.python.analysis.extraPaths = {
-								project_root .. "/.venv/lib/python3*/site-packages",
-							}
+							-- Add root directory of the project to help with local imports
+							local root_dir = vim.fn.getcwd()
+							table.insert(config.settings.python.analysis.extraPaths, root_dir)
+
+							-- vim.notify("Python Path: " .. python_path)
+							-- vim.notify("Root Dir: " .. root_dir)
 						end
 					end,
 				})

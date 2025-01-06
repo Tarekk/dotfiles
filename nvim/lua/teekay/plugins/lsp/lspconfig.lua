@@ -5,6 +5,7 @@ return {
 		"hrsh7th/cmp-nvim-lsp",
 		{ "antosha417/nvim-lsp-file-operations", config = true },
 		{ "folke/neodev.nvim", opts = {} },
+		"ray-x/lsp_signature.nvim",
 	},
 	config = function()
 		-- import lspconfig plugin
@@ -64,6 +65,18 @@ return {
 
 				opts.desc = "Restart LSP"
 				keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
+
+				-- Setup lsp_signature.nvim
+				require("lsp_signature").on_attach({
+					bind = true,
+					handler_opts = {
+						border = "rounded" -- To match your existing LSP windows
+					},
+					hint_enable = true,
+					hint_prefix = "🐼 ",
+					max_width = 80,
+					max_height = 12
+				}, ev.buf)
 			end,
 		})
 

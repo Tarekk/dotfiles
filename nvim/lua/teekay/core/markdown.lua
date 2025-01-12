@@ -3,6 +3,12 @@ vim.api.nvim_create_autocmd("FileType", {
 	callback = function()
 		vim.opt_local.wrap = true
 		vim.opt_local.linebreak = true
+
+		vim.opt_local.formatoptions:append("ro")
+		vim.opt_local.comments = "b:-"
+		vim.opt_local.breakindent = true
+		vim.opt_local.breakindentopt = "shift:2"
+
 		-- Normal mode mappings
 		vim.keymap.set("n", "j", "gj", { buffer = true })
 		vim.keymap.set("n", "k", "gk", { buffer = true })

@@ -20,7 +20,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     # Linux
     apt-get purge --auto-remove neovim
-    apt install -y tmux curl build-essential --fix-missing
+    apt install -y tmux curl build-essential software-properties-common --fix-missing
 
     apt update && apt upgrade -y
     add-apt-repository ppa:deadsnakes/ppa

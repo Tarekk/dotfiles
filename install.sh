@@ -28,8 +28,8 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     apt install -y python3.10 npm unzip ripgrep python3.10-venv --fix-missing
 
     # not sure if these are necessary, also how to dynamically know default sys py version?
-    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
-    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 2
+    # update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
+    # update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 2
 
     wget -c https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
     tar xzf nvim-linux-x86_64.tar.gz

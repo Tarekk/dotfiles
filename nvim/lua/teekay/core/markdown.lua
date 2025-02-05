@@ -5,14 +5,18 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.opt_local.linebreak = true
 		vim.opt_local.formatoptions:append("ro")
 		vim.opt_local.comments = "b:-"
+
+		-- Configure list detection and indentation
+		vim.opt_local.formatlistpat = [[\s*-\s.*]] -- Pattern to identify list items
 		vim.opt_local.breakindent = true
-		vim.opt_local.breakindentopt = "shift:2"
+		vim.opt_local.breakindentopt = "list:2" -- Use list mode with negative shift to align with text
+
 		-- Function to indent unindented bullet points
 		local function indent_unindented_bullets()
 			local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
 			local modified_lines = {}
 			for _, line in ipairs(lines) do
-				if line:match("^%-") then
+				if line:match("^%-[^-]") then -- Match single dash not followed by another dash
 					table.insert(modified_lines, "  " .. line)
 				else
 					table.insert(modified_lines, line)

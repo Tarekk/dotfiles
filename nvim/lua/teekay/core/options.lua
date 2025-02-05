@@ -43,3 +43,7 @@ vim.opt.isfname:append("@-@")
 vim.opt.updatetime = 50
 
 vim.opt.colorcolumn = "80"
+
+-- case insensitive by default, if using uppercase will switch to be sensitive
+vim.opt.ignorecase = true
+vim.opt.smartcase = true

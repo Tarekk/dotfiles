@@ -70,12 +70,12 @@ return {
 				require("lsp_signature").on_attach({
 					bind = true,
 					handler_opts = {
-						border = "rounded" -- To match your existing LSP windows
+						border = "rounded", -- To match your existing LSP windows
 					},
 					hint_enable = true,
 					hint_prefix = "🐼 ",
 					max_width = 80,
-					max_height = 12
+					max_height = 12,
 				}, ev.buf)
 			end,
 		})
@@ -159,7 +159,6 @@ return {
 					settings = {
 						python = {
 							-- Path to the virtual environment
-							-- This should point to your uv-created venv
 							venvPath = ".venv",
 							pythonPath = ".venv/bin/python",
 

@@ -67,11 +67,6 @@ rm -rf ~/.config/nvim
 ln -sf "$(pwd)/nvim" ~/.config/nvim
 ln -sf "$(pwd)/tmux/.tmux.conf" ~/.tmux.conf
 
-# Install plugins
-echo "Installing plugins..."
-# Install neovim plugins (lazy.nvim will handle this on first launch)
-nvim --headless "+Lazy! sync" +qa
-
 # Install tmux plugins
 ~/.tmux/plugins/tpm/bin/install_plugins
 

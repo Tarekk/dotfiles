@@ -20,12 +20,12 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     # Linux
     apt-get purge --auto-remove neovim
-    apt install -y tmux curl build-essential
+    apt install -y tmux curl build-essential --fix-missing
 
     apt update && apt upgrade -y
     add-apt-repository ppa:deadsnakes/ppa
     apt update
-    apt install -y python3.10 npm unzip ripgrep python3.10-venv
+    apt install -y python3.10 npm unzip ripgrep python3.10-venv --fix-missing
 
     # not sure if these are necessary, also how to dynamically know default sys py version?
     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1

@@ -17,8 +17,10 @@ return {
 		-- this makes jumping across matched search files possilbe
 		local custom_actions = transform_mod({
 			to_qf = function(prompt_bufnr)
+				local selection = action_state.get_selected_entry()
 				local picker = action_state.get_current_picker(prompt_bufnr)
 				local qf_entries = {}
+
 				for entry in picker.manager:iter() do
 					if entry.filename then
 						table.insert(qf_entries, {
@@ -29,12 +31,21 @@ return {
 						})
 					end
 				end
+
+				local selected_filename = selection.filename
+				local selected_lnum = selection.lnum or 1
+				local selected_col = selection.col or 1
+
 				actions.close(prompt_bufnr)
 				if #qf_entries > 0 then
 					vim.fn.setqflist(qf_entries)
-					local first = qf_entries[1]
-					vim.cmd(string.format("edit +%d %s", first.lnum, first.filename))
-					vim.cmd(string.format("normal! %d|", first.col))
+					-- Jump to selected file instead of first entry
+					if #qf_entries > 0 then
+						vim.fn.setqflist(qf_entries)
+						-- Jump to the selected file using stored values
+						vim.cmd(string.format("edit +%d %s", selected_lnum, selected_filename))
+						vim.cmd(string.format("normal! %d|", selected_col))
+					end
 				end
 			end,
 		})

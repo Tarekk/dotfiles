@@ -37,3 +37,6 @@ vim.keymap.set("n", "<leader>vpp", "<cmd>e ~/.dotfiles/nvim/.config/nvim/lua/the
 vim.keymap.set("n", "<leader>mr", "<cmd>CellularAutomaton make_it_rain<CR>")
 
 vim.keymap.set({ "n", "v" }, "<leader>/", ":CommentToggle<cr>")
+
+-- for html tags
+vim.keymap.set("n", "<leader>dt", "T<ldt>")

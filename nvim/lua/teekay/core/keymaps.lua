@@ -39,4 +39,4 @@ vim.keymap.set("n", "<leader>mr", "<cmd>CellularAutomaton make_it_rain<CR>")
 vim.keymap.set({ "n", "v" }, "<leader>/", ":CommentToggle<cr>")
 
 -- for html tags
-vim.keymap.set("n", "<leader>dt", "T<ldt>")
+vim.keymap.set("n", "<leader>dt", "T<whdt>")

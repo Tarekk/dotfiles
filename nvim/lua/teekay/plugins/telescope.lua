@@ -12,7 +12,6 @@ return {
 		local action_state = require("telescope.actions.state")
 		local builtin = require("telescope.builtin")
 		local transform_mod = require("telescope.actions.mt").transform_mod
-
 		-- push search results to vim qflist
 		-- this makes jumping across matched search files possilbe
 		local custom_actions = transform_mod({
@@ -20,7 +19,6 @@ return {
 				local selection = action_state.get_selected_entry()
 				local picker = action_state.get_current_picker(prompt_bufnr)
 				local qf_entries = {}
-
 				for entry in picker.manager:iter() do
 					if entry.filename then
 						table.insert(qf_entries, {
@@ -31,11 +29,9 @@ return {
 						})
 					end
 				end
-
 				local selected_filename = selection.filename
 				local selected_lnum = selection.lnum or 1
 				local selected_col = selection.col or 1
-
 				actions.close(prompt_bufnr)
 				if #qf_entries > 0 then
 					vim.fn.setqflist(qf_entries)
@@ -49,7 +45,6 @@ return {
 				end
 			end,
 		})
-
 		telescope.setup({
 			defaults = {
 				path_display = { "smart" },
@@ -57,20 +52,26 @@ return {
 					i = {
 						["<C-k>"] = actions.move_selection_previous,
 						["<C-j>"] = actions.move_selection_next,
+						["<C-v>"] = function(prompt_bufnr)
+							-- This will close the prompt first
+							actions.close(prompt_bufnr)
+							-- Get the current selection
+							local selection = action_state.get_selected_entry()
+							-- Open the file in a vertical split on the right
+							vim.cmd("botright vsplit")
+							vim.cmd(string.format("edit %s", selection.path))
+						end,
 						["<CR>"] = custom_actions.to_qf,
 					},
 				},
 			},
 		})
-
 		telescope.load_extension("fzf")
-
 		local function search_in_directory(prompt_bufnr)
 			local selection = action_state.get_selected_entry()
 			actions.close(prompt_bufnr)
 			builtin.live_grep({ search_dirs = { selection.value } })
 		end
-
 		local keymap = vim.keymap
 		keymap.set("n", "<leader>ff", function()
 			builtin.find_files({ hidden = true })
@@ -79,10 +80,8 @@ return {
 		keymap.set("n", "<leader>fs", builtin.live_grep, { desc = "Find string in cwd" })
 		keymap.set("n", "<leader>fc", builtin.grep_string, { desc = "Find string under cursor in cwd" })
 		keymap.set("n", "<leader>rf", builtin.lsp_references, { desc = "Find references" })
-
 		-- navigate through qflist, no prev mappping, just use CTRL + I/O
 		keymap.set("n", "<leader>q", "<cmd>cnext | normal! zz<CR>", { desc = "Next quickfix item" })
-
 		-- useful for monorepos or big codebases. Select dir first and then grep search
 		keymap.set("n", "<leader>fd", function()
 			builtin.find_files({

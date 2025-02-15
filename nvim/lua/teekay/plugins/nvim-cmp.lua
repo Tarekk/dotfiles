@@ -75,7 +75,18 @@ return {
 
 		-- Command line completion
 		cmp.setup.cmdline(":", {
-			mapping = cmp.mapping.preset.cmdline(),
+			mapping = {
+				["<C-j>"] = {
+					c = function()
+						cmp.select_next_item()
+					end,
+				},
+				["<C-k>"] = {
+					c = function()
+						cmp.select_prev_item()
+					end,
+				},
+			},
 			sources = cmp.config.sources({
 				{ name = "path" },
 			}, {
@@ -85,7 +96,18 @@ return {
 
 		-- File path completion
 		cmp.setup.cmdline("/", {
-			mapping = cmp.mapping.preset.cmdline(),
+			mapping = {
+				["<C-j>"] = {
+					c = function()
+						cmp.select_next_item()
+					end,
+				},
+				["<C-k>"] = {
+					c = function()
+						cmp.select_prev_item()
+					end,
+				},
+			},
 			sources = {
 				{ name = "buffer" },
 			},

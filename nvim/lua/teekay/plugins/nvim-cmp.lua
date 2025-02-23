@@ -14,30 +14,11 @@ return {
 		"saadparwaiz1/cmp_luasnip",
 		"rafamadriz/friendly-snippets",
 		"onsails/lspkind.nvim",
-		-- Add Codeium
-		{
-			"Exafunction/codeium.vim", -- Changed to codeium.vim
-			event = "BufEnter",
-		},
 	},
 	config = function()
 		local cmp = require("cmp")
 		local luasnip = require("luasnip")
 		local lspkind = require("lspkind")
-
-		-- Set up Codeium keymaps
-		vim.keymap.set("i", "<C-g>", function()
-			return vim.fn["codeium#Accept"]()
-		end, { expr = true })
-		vim.keymap.set("i", "<C-;>", function()
-			return vim.fn["codeium#CycleNext"]()
-		end, { expr = true })
-		vim.keymap.set("i", "<C-,>", function()
-			return vim.fn["codeium#CyclePrev"]()
-		end, { expr = true })
-		vim.keymap.set("i", "<C-x>", function()
-			return vim.fn["codeium#Clear"]()
-		end, { expr = true })
 
 		require("luasnip.loaders.from_vscode").lazy_load()
 

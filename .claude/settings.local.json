@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/tarekkekhia/.config/nvim/lua/teekay/plugins/lsp/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

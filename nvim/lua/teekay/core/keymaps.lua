@@ -40,3 +40,7 @@ vim.keymap.set({ "n", "v" }, "<leader>/", ":CommentToggle<cr>")
 
 -- for html tags
 vim.keymap.set("n", "<leader>dt", "T<whdt>")
+
+-- tab through buffer files
+vim.keymap.set("n", "<Tab>", ":bnext<CR>", { silent = true })
+vim.keymap.set("n", "<S-Tab>", ":bprevious<CR>", { silent = true })

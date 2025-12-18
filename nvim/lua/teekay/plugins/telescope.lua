@@ -77,6 +77,37 @@ return {
 			builtin.find_files({ hidden = true })
 		end, { desc = "Fuzzy find files in cwd" })
 		keymap.set("n", "<leader>fr", builtin.oldfiles, { desc = "Fuzzy find recent files" })
+		keymap.set("n", "<leader>fv", function()
+			builtin.buffers({
+				-- Optional customizations for a better buffer picker
+				sort_mru = true, -- Sort by most recently used first
+				sort_lastused = true, -- Same as above, more explicit
+				ignore_current_buffer = true, -- Don't show the buffer you're currently in at the top
+				show_all_buffers = false, -- Only show listed (visible) buffers
+				previewer = true, -- Show preview of buffer content
+				prompt_title = "Open Buffers",
+				path_display = { "smart" }, -- Consistent with your defaults
+				-- Optional: delete buffer with <C-d> (requires telescope-actions or default)
+				attach_mappings = function(prompt_bufnr, map)
+					-- Delete buffer with Ctrl-d (closes the buffer properly)
+					map("i", "<C-d>", function()
+						local selection = action_state.get_selected_entry()
+						actions.close(prompt_bufnr)
+						if selection then
+							vim.api.nvim_buf_delete(selection.bufnr, { force = false })
+						end
+					end)
+					map("n", "<C-d>", function()
+						local selection = action_state.get_selected_entry()
+						actions.close(prompt_bufnr)
+						if selection then
+							vim.api.nvim_buf_delete(selection.bufnr, { force = false })
+						end
+					end)
+					return true
+				end,
+			})
+		end, { desc = "Fuzzy find open buffers" })
 		keymap.set("n", "<leader>fs", builtin.live_grep, { desc = "Find string in cwd" })
 		keymap.set("n", "<leader>fc", builtin.grep_string, { desc = "Find string under cursor in cwd" })
 		keymap.set("n", "<leader>rf", builtin.lsp_references, { desc = "Find references" })

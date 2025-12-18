@@ -82,33 +82,74 @@ return {
 		keymap.set("n", "<leader>rf", builtin.lsp_references, { desc = "Find references" })
 		keymap.set("n", "<leader>p", function()
 			local word = vim.fn.expand("<cword>")
-			builtin.find_files({
-				find_command = {
-					"find",
-					".",
-					"(",
-					"-path",
-					"*/.*",
-					"-o",
-					"-path",
-					"*/node_modules/*",
-					"-o",
-					"-path",
-					"*/dist/*",
-					"-o",
-					"-path",
-					"*/build/*",
-					")",
-					"-prune",
-					"-o",
-					"-path",
-					"*/prompts/*",
-					"-type",
-					"f",
-					"-print",
-				},
-				default_text = word,
+			-- First, find all files in prompts/
+			local find_cmd = vim.fn.systemlist({
+				"find",
+				".",
+				"(",
+				"-path",
+				"*/.*",
+				"-o",
+				"-path",
+				"*/node_modules/*",
+				"-o",
+				"-path",
+				"*/dist/*",
+				"-o",
+				"-path",
+				"*/build/*",
+				")",
+				"-prune",
+				"-o",
+				"-path",
+				"*/prompts/*",
+				"-type",
+				"f",
+				"-print",
 			})
+
+			-- Check for exact filename matches
+			local exact_matches = {}
+			for _, file in ipairs(find_cmd) do
+				local filename = vim.fn.fnamemodify(file, ":t")
+				if filename == word or filename:match("^" .. vim.pesc(word) .. "%.") then
+					table.insert(exact_matches, file)
+				end
+			end
+
+			-- If exactly one exact match, open it directly
+			if #exact_matches == 1 then
+				vim.cmd("edit " .. exact_matches[1])
+			else
+				-- Otherwise show telescope picker
+				builtin.find_files({
+					find_command = {
+						"find",
+						".",
+						"(",
+						"-path",
+						"*/.*",
+						"-o",
+						"-path",
+						"*/node_modules/*",
+						"-o",
+						"-path",
+						"*/dist/*",
+						"-o",
+						"-path",
+						"*/build/*",
+						")",
+						"-prune",
+						"-o",
+						"-path",
+						"*/prompts/*",
+						"-type",
+						"f",
+						"-print",
+					},
+					default_text = word,
+				})
+			end
 		end, { desc = "Find files in prompts/ matching word under cursor" })
 		-- navigate through qflist, no prev mappping, just use CTRL + I/O
 		keymap.set("n", "<leader>q", "<cmd>cnext | normal! zz<CR>", { desc = "Next quickfix item" })

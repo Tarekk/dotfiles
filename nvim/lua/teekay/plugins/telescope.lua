@@ -80,6 +80,36 @@ return {
 		keymap.set("n", "<leader>fs", builtin.live_grep, { desc = "Find string in cwd" })
 		keymap.set("n", "<leader>fc", builtin.grep_string, { desc = "Find string under cursor in cwd" })
 		keymap.set("n", "<leader>rf", builtin.lsp_references, { desc = "Find references" })
+		keymap.set("n", "<leader>p", function()
+			local word = vim.fn.expand("<cword>")
+			builtin.find_files({
+				find_command = {
+					"find",
+					".",
+					"(",
+					"-path",
+					"*/.*",
+					"-o",
+					"-path",
+					"*/node_modules/*",
+					"-o",
+					"-path",
+					"*/dist/*",
+					"-o",
+					"-path",
+					"*/build/*",
+					")",
+					"-prune",
+					"-o",
+					"-path",
+					"*/prompts/*",
+					"-type",
+					"f",
+					"-print",
+				},
+				default_text = word,
+			})
+		end, { desc = "Find files in prompts/ matching word under cursor" })
 		-- navigate through qflist, no prev mappping, just use CTRL + I/O
 		keymap.set("n", "<leader>q", "<cmd>cnext | normal! zz<CR>", { desc = "Next quickfix item" })
 		-- useful for monorepos or big codebases. Select dir first and then grep search

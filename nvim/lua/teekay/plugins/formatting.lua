@@ -19,23 +19,7 @@ return {
 				graphql = { "prettier" },
 				liquid = { "prettier" },
 				lua = { "stylua" },
-				python = { "autoflake", "isort", "black" },
-			},
-			formatters = {
-				autoflake = {
-					prepend_args = {
-						"--remove-all-unused-imports",
-						"--remove-unused-variables",
-						"--ignore-init-module-imports",
-					},
-				},
-				black = {
-					prepend_args = { "--fast" },
-					-- Increase timeout for black specifically
-					timeout_ms = 5000,
-					-- Optionally, you can make it use the project's venv
-					-- command = vim.fn.expand("~/.local/share/nvim/mason/bin/black"),
-				},
+				python = { "ruff_fix", "ruff_format" },
 			},
 			format_on_save = {
 				lsp_fallback = true,

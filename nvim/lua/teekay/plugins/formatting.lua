@@ -19,9 +19,16 @@ return {
 				graphql = { "prettier" },
 				liquid = { "prettier" },
 				lua = { "stylua" },
-				python = { "isort", "black" },
+				python = { "autoflake", "isort", "black" },
 			},
 			formatters = {
+				autoflake = {
+					prepend_args = {
+						"--remove-all-unused-imports",
+						"--remove-unused-variables",
+						"--ignore-init-module-imports",
+					},
+				},
 				black = {
 					prepend_args = { "--fast" },
 					-- Increase timeout for black specifically

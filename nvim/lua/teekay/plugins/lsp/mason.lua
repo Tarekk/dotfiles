@@ -168,6 +168,7 @@ return {
 				"stylua", -- lua formatter
 				"isort", -- python formatter
 				"black", -- python formatter
+				"autoflake", -- python - remove unused imports
 				-- "pylint",
 				"eslint_d",
 			},

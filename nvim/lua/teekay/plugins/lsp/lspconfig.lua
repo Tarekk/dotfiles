@@ -22,13 +22,19 @@ return {
 				-- Get the LSP client
 				local client = vim.lsp.get_client_by_id(ev.data.client_id)
 
+				-- Get the filetype
+				local filetype = vim.api.nvim_buf_get_option(ev.buf, "filetype")
+
 				-- set keybinds
 				opts.desc = "Show LSP references"
 				keymap.set("n", "gR", "<cmd>Telescope lsp_references<CR>", opts)
 				opts.desc = "Go to declaration"
 				keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
-				opts.desc = "Show LSP definitions"
-				keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts)
+				-- Don't set gd for markdown/jinja files (we have custom mapping for those)
+				if not vim.tbl_contains({ "markdown", "jinja", "html.jinja", "jinja2" }, filetype) then
+					opts.desc = "Show LSP definitions"
+					keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts)
+				end
 				opts.desc = "Show LSP implementations"
 				keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts)
 				opts.desc = "Show LSP type definitions"

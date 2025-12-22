@@ -182,6 +182,20 @@ return {
 				})
 			end
 		end, { desc = "Find files in prompts/ matching word under cursor" })
+
+		-- Override gd for markdown files to search for Jinja2 function definitions
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = { "markdown", "jinja", "html.jinja", "jinja2" },
+			callback = function()
+				keymap.set("n", "gd", function()
+					local word = vim.fn.expand("<cword>")
+					builtin.grep_string({
+						search = "def " .. word,
+						use_regex = false,
+					})
+				end, { buffer = true, desc = "Jump to Jinja2 function definition" })
+			end,
+		})
 		-- navigate through qflist, no prev mappping, just use CTRL + I/O
 		keymap.set("n", "<leader>q", "<cmd>cnext | normal! zz<CR>", { desc = "Next quickfix item" })
 		-- useful for monorepos or big codebases. Select dir first and then grep search

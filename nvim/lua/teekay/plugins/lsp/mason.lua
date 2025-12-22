@@ -166,9 +166,7 @@ return {
 			ensure_installed = {
 				"prettier", -- prettier formatter
 				"stylua", -- lua formatter
-				"isort", -- python formatter
-				"black", -- python formatter
-				"autoflake", -- python - remove unused imports
+				"ruff", -- python formatter and linter
 				-- "pylint",
 				"eslint_d",
 			},

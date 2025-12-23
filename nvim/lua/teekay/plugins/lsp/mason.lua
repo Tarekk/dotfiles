@@ -170,6 +170,7 @@ return {
 				-- "pylint",
 				"eslint_d",
 				"djlint", -- jinja/django template formatter
+				"xmlformatter", -- xml formatter
 			},
 		})
 	end,

@@ -20,6 +20,7 @@ return {
 				liquid = { "prettier" },
 				lua = { "stylua" },
 				python = { "ruff_fix", "ruff_format" },
+				xml = { "xmlformat" },
 			},
 			formatters = {
 				djlint = {

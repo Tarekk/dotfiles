@@ -169,6 +169,7 @@ return {
 				"ruff", -- python formatter and linter
 				-- "pylint",
 				"eslint_d",
+				"djlint", -- jinja/django template formatter
 			},
 		})
 	end,

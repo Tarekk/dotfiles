@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Read(//Users/tarekkekhia/.config/nvim/lua/teekay/plugins/lsp/**)"
+      "Read(//Users/tarekkekhia/.config/nvim/lua/teekay/plugins/lsp/**)",
+      "Bash(cat:*)",
+      "Bash(~/.local/share/nvim/mason/bin/djlint:*)"
     ],
     "deny": [],
     "ask": []

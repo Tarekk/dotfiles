@@ -13,6 +13,7 @@ export ZSH="$HOME/.oh-my-zsh"
 export PATH="$HOME/.local/bin:$PATH"
 
 export EDITOR="nvim"
+alias vim='nvim'
 
 alias updateclaude='rm -rf /opt/homebrew/lib/node_modules/@anthropic-ai/claude-code && npm i -g @anthropic-ai/claude-code'
 

@@ -1,23 +1,34 @@
 # dotfiles
 
-Personal Neovim + Tmux configuration managed with symlinks.
+Personal dev environment managed with [GNU Stow](https://www.gnu.org/software/stow/). One command to bootstrap a fresh Mac or Linux machine.
 
-## Installation
+## Quick Start
 
 ```bash
-git clone <repo-url> ~/Documents/dotfiles
-cd ~/Documents/dotfiles
+git clone <repo-url> ~/.dotfiles
+cd ~/.dotfiles
 chmod +x install.sh
 ./install.sh
 ```
 
-The install script handles:
-- Installing dependencies (neovim, tmux, git, curl) via Homebrew (macOS) or apt (Linux)
-- Backing up existing configs
-- Symlinking `nvim/` to `~/.config/nvim` and tmux config to `~/.tmux.conf`
-- Installing TPM (Tmux Plugin Manager)
+The install script:
+1. Installs packages via Homebrew (macOS) or apt (Linux)
+2. Uses `stow --restow` to symlink config packages into `$HOME`
+3. Installs Oh My Zsh + zsh-vi-mode plugin
+4. Installs TPM and tmux plugins
+5. Creates `~/.zshrc.local` and `~/.gitconfig-local` templates for machine-specific settings
+6. Sets zsh as default shell
 
-On first launch, Neovim will auto-bootstrap [lazy.nvim](https://github.com/folke/lazy.nvim) and install all plugins.
+## Structure
+
+| Directory | Stowed? | Description |
+|-----------|---------|-------------|
+| `nvim/` | Yes | Neovim config → `~/.config/nvim` |
+| `tmux/` | Yes | tmux config → `~/.tmux.conf` |
+| `zsh/` | Yes | Zsh config → `~/.zshrc` |
+| `git/` | Yes | Git config → `~/.gitconfig`, `~/.gitignore_global` |
+| `iterm2/` | No | iTerm2 color scheme (imported during install) |
+| `scripts/` | No | OS-specific install scripts |
 
 ## Neovim Plugins
 
@@ -40,3 +51,18 @@ On first launch, Neovim will auto-bootstrap [lazy.nvim](https://github.com/folke
 ### LSP Servers (via Mason)
 
 ts_ls, html, cssls, tailwindcss, svelte, lua_ls, graphql, emmet_ls, prismals, pyright
+
+## Machine-Specific Config
+
+Files not tracked in git — created as templates on first install:
+
+- **`~/.zshrc.local`** — API keys, local PATHs (Pulumi, LM Studio, etc.)
+- **`~/.gitconfig-local`** — `includeIf` blocks for work repos
+
+## Re-running
+
+The install script is idempotent — safe to run again at any time:
+
+```bash
+cd ~/.dotfiles && ./install.sh
+```

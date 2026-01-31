@@ -2,72 +2,84 @@
 
 set -e
 
-# Helper functions
-command_exists() {
-    command -v "$1" >/dev/null 2>&1
-}
+DOTFILES_DIR="$HOME/.dotfiles"
 
-# Detect OS
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS
-    if ! command_exists brew; then
-        echo "Installing Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    fi
-
-    # Install dependencies with brew
-    brew install neovim tmux git curl
-elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    # Linux
-    apt-get purge --auto-remove neovim
-    apt install -y tmux curl wget build-essential software-properties-common --fix-missing
-
-    apt update && apt upgrade -y
-    add-apt-repository ppa:deadsnakes/ppa
-    apt update
-    apt install -y python3.10 npm unzip ripgrep python3.10-venv --fix-missing
-
-    # not sure if these are necessary, also how to dynamically know default sys py version?
-    # update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
-    # update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 2
-
-    wget -c https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
-    tar xzf nvim-linux-x86_64.tar.gz
-    mv nvim-linux-x86_64 /usr/local/nvim
-    ln -sf /usr/local/nvim/bin/nvim /usr/local/bin/nvim
+# ── Validate location ──────────────────────────────────────────────
+if [ "$(cd "$(dirname "$0")" && pwd)" != "$DOTFILES_DIR" ]; then
+    echo "Error: This repo must live at $DOTFILES_DIR"
+    echo "  ln -s $(cd "$(dirname "$0")" && pwd) $DOTFILES_DIR"
+    exit 1
 fi
 
-# Create config directories
-mkdir -p ~/.config/nvim
-mkdir -p ~/.local/share/nvim
-mkdir -p ~/.tmux/plugins
+cd "$DOTFILES_DIR"
 
-# Backup existing configs
-if [ -f ~/.config/nvim/init.lua ]; then
-    echo "Backing up existing neovim config..."
-    mv ~/.config/nvim{,.bak}
+# ── OS-specific packages ───────────────────────────────────────────
+if [[ "$OSTYPE" == darwin* ]]; then
+    source "$DOTFILES_DIR/scripts/macos.sh"
+elif [[ "$OSTYPE" == linux-gnu* ]]; then
+    source "$DOTFILES_DIR/scripts/linux.sh"
 fi
 
-if [ -f ~/.tmux.conf ]; then
-    echo "Backing up existing tmux config..."
-    mv ~/.tmux.conf{,.bak}
+# ── Stow packages ─────────────────────────────────────────────────
+echo "Stowing dotfiles..."
+for pkg in nvim tmux zsh git; do
+    stow --restow --target="$HOME" "$pkg"
+    echo "  stowed $pkg"
+done
+
+# ── Oh My Zsh ──────────────────────────────────────────────────────
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    echo "Installing Oh My Zsh..."
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 fi
 
-# Install TPM
-if [ ! -d ~/.tmux/plugins/tpm ]; then
+# ── zsh-vi-mode plugin ────────────────────────────────────────────
+ZVM_DIR="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-vi-mode"
+if [ ! -d "$ZVM_DIR" ]; then
+    echo "Installing zsh-vi-mode..."
+    git clone https://github.com/jeffreytse/zsh-vi-mode "$ZVM_DIR"
+fi
+
+# ── TPM + tmux plugins ────────────────────────────────────────────
+if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
     echo "Installing TPM..."
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
 fi
 
-# Create symlinks
-echo "Creating symlinks..."
-# Remove existing nvim config directory if it exists
-rm -rf ~/.config/nvim
-# Create the symlink for nvim config
-ln -sf "$(pwd)/nvim" ~/.config/nvim
-ln -sf "$(pwd)/tmux/.tmux.conf" ~/.tmux.conf
+echo "Installing tmux plugins..."
+"$HOME/.tmux/plugins/tpm/bin/install_plugins"
 
-# Install tmux plugins
-~/.tmux/plugins/tpm/bin/install_plugins
+# ── Local config templates ─────────────────────────────────────────
+if [ ! -f "$HOME/.zshrc.local" ]; then
+    cat > "$HOME/.zshrc.local" <<'EOF'
+# Machine-specific shell config (not tracked in git)
+# Examples:
+# export GEMINI_API_KEY="..."
+# export GOOGLE_CLOUD_PROJECT="..."
+# export PATH="$PATH:$HOME/.pulumi/bin"
+EOF
+    echo "Created ~/.zshrc.local template"
+fi
 
-echo "Installation complete! Please restart your terminal."
+if [ ! -f "$HOME/.gitconfig-local" ]; then
+    cat > "$HOME/.gitconfig-local" <<'EOF'
+# Machine-specific git config (not tracked in git)
+# Examples:
+# [includeIf "gitdir:~/work/"]
+#     path = ~/.gitconfig-work
+EOF
+    echo "Created ~/.gitconfig-local template"
+fi
+
+# ── Default shell ──────────────────────────────────────────────────
+ZSH_PATH="$(which zsh)"
+if [ "$SHELL" != "$ZSH_PATH" ]; then
+    echo "Changing default shell to zsh..."
+    if ! grep -q "$ZSH_PATH" /etc/shells; then
+        echo "$ZSH_PATH" | sudo tee -a /etc/shells
+    fi
+    chsh -s "$ZSH_PATH"
+fi
+
+echo ""
+echo "Done! Restart your terminal or run: exec zsh"

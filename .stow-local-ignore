@@ -1,0 +1,11 @@
+\.DS_Store
+\.git
+\.gitignore
+\.stow-local-ignore
+\.claude
+install\.sh
+Brewfile
+README\.md
+LICENSE
+scripts
+iterm2

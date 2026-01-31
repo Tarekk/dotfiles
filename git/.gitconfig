@@ -1,6 +1,3 @@
-[user]
-	name = emeraldtarek
-	email = tarek.kekhia@emeraldlake.io
 [core]
 	excludesfile = ~/.gitignore_global
 	editor = nvim

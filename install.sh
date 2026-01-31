@@ -23,7 +23,7 @@ fi
 # ── Stow packages ─────────────────────────────────────────────────
 echo "Stowing dotfiles..."
 for pkg in nvim tmux zsh git; do
-    stow --restow --target="$HOME" "$pkg"
+    stow --adopt --restow --target="$HOME" "$pkg"
     echo "  stowed $pkg"
 done
 

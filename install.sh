@@ -23,7 +23,14 @@ fi
 # ── Stow packages ─────────────────────────────────────────────────
 echo "Stowing dotfiles..."
 for pkg in nvim tmux zsh git; do
-    stow --adopt --restow --target="$HOME" "$pkg"
+    # Back up existing files that would conflict with stow
+    for f in $(stow --no --verbose --target="$HOME" "$pkg" 2>&1 | grep "existing target" | sed 's/.*: //'); do
+        if [ -e "$HOME/$f" ] && [ ! -L "$HOME/$f" ]; then
+            echo "  backing up ~/$f → ~/${f}.backup"
+            mv "$HOME/$f" "$HOME/${f}.backup"
+        fi
+    done
+    stow --restow --target="$HOME" "$pkg"
     echo "  stowed $pkg"
 done
 

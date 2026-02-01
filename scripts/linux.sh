@@ -15,13 +15,32 @@ sudo apt-get install -y \
     stow \
     ripgrep \
     fzf \
-    npm \
     python3 \
     python3-venv \
     zsh \
     build-essential \
     software-properties-common \
     unzip
+
+# Node.js via NodeSource (for modern npm/node)
+if ! command -v node &>/dev/null; then
+    echo "Installing Node.js via NodeSource..."
+    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+    sudo apt-get install -y nodejs
+fi
+
+# GitHub CLI
+if ! command -v gh &>/dev/null; then
+    echo "Installing GitHub CLI..."
+    sudo mkdir -p -m 755 /etc/apt/keyrings
+    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+        | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null
+    sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+        | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+    sudo apt-get update
+    sudo apt-get install -y gh
+fi
 
 # Neovim via PPA
 echo "Installing Neovim..."
@@ -30,11 +49,15 @@ if ! command -v nvim &>/dev/null; then
         sudo apt-get update
         sudo apt-get install -y neovim
     else
-        # Fallback: appimage
+        # Fallback: extract appimage (no FUSE required)
         echo "PPA unavailable, installing Neovim via appimage..."
         curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
         chmod u+x nvim.appimage
-        sudo mv nvim.appimage /usr/local/bin/nvim
+        ./nvim.appimage --appimage-extract
+        sudo rm -rf /opt/nvim
+        sudo mv squashfs-root /opt/nvim
+        sudo ln -sf /opt/nvim/usr/bin/nvim /usr/local/bin/nvim
+        rm nvim.appimage
     fi
 fi
 

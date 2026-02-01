@@ -12,6 +12,11 @@ export ZSH="$HOME/.oh-my-zsh"
 
 export PATH="$HOME/.local/bin:$PATH"
 
+# fnm (Fast Node Manager) — used on Linux; no-op if not installed
+if command -v fnm &>/dev/null; then
+    eval "$(fnm env --use-on-cd --shell zsh)"
+fi
+
 export EDITOR="nvim"
 
 alias updateclaude='rm -rf /opt/homebrew/lib/node_modules/@anthropic-ai/claude-code && npm i -g @anthropic-ai/claude-code'

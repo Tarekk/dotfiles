@@ -7,7 +7,7 @@ echo "Updating package lists..."
 sudo apt-get update
 
 echo "Installing core packages..."
-sudo apt-get install -y \
+sudo apt-get install -y --no-install-recommends \
     tmux \
     git \
     curl \

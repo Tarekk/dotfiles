@@ -54,7 +54,10 @@ if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
 fi
 
 echo "Installing tmux plugins..."
-"$HOME/.tmux/plugins/tpm/bin/install_plugins"
+tmux new-session -d -s _tpm_install 2>/dev/null && \
+    "$HOME/.tmux/plugins/tpm/bin/install_plugins" && \
+    tmux kill-session -t _tpm_install 2>/dev/null || \
+    echo "  skipped (will auto-install on first tmux launch — press prefix + I)"
 
 # ── Local config templates ─────────────────────────────────────────
 if [ ! -f "$HOME/.zshrc.local" ]; then

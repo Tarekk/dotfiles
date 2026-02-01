@@ -43,23 +43,30 @@ if ! command -v gh &>/dev/null; then
     sudo apt-get install -y gh
 fi
 
-# Neovim via PPA
-echo "Installing Neovim..."
-if ! command -v nvim &>/dev/null; then
-    if sudo add-apt-repository -y ppa:neovim-ppa/stable 2>/dev/null; then
-        sudo apt-get update
-        sudo apt-get install -y neovim
+# Neovim (requires 0.11+ for modern plugin support)
+NVIM_MIN_VERSION="0.11"
+install_nvim_appimage() {
+    echo "Installing Neovim via GitHub release..."
+    curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+    chmod u+x nvim.appimage
+    ./nvim.appimage --appimage-extract
+    sudo rm -rf /opt/nvim
+    sudo mv squashfs-root /opt/nvim
+    sudo ln -sf /opt/nvim/usr/bin/nvim /usr/local/bin/nvim
+    rm nvim.appimage
+}
+
+if command -v nvim &>/dev/null; then
+    NVIM_VERSION=$(nvim --version | head -1 | grep -oP '\d+\.\d+')
+    if [ "$(printf '%s\n' "$NVIM_MIN_VERSION" "$NVIM_VERSION" | sort -V | head -1)" != "$NVIM_MIN_VERSION" ]; then
+        echo "Neovim $NVIM_VERSION is too old (need $NVIM_MIN_VERSION+), upgrading..."
+        sudo apt-get remove -y neovim 2>/dev/null || true
+        install_nvim_appimage
     else
-        # Fallback: extract appimage (no FUSE required)
-        echo "PPA unavailable, installing Neovim via appimage..."
-        curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
-        chmod u+x nvim.appimage
-        ./nvim.appimage --appimage-extract
-        sudo rm -rf /opt/nvim
-        sudo mv squashfs-root /opt/nvim
-        sudo ln -sf /opt/nvim/usr/bin/nvim /usr/local/bin/nvim
-        rm nvim.appimage
+        echo "Neovim $NVIM_VERSION is already installed."
     fi
+else
+    install_nvim_appimage
 fi
 
 # JetBrains Mono Nerd Font

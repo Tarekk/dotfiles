@@ -20,7 +20,8 @@ sudo apt-get install -y --no-install-recommends \
     zsh \
     build-essential \
     software-properties-common \
-    unzip
+    unzip \
+    fontconfig
 
 # Node.js via NodeSource (for modern npm/node)
 if ! command -v node &>/dev/null; then

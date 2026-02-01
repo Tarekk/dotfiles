@@ -61,7 +61,7 @@ fi
 
 if ! fnm list 2>/dev/null | grep -q "v[0-9]"; then
     echo "Installing Node.js LTS via fnm..."
-    eval "$(fnm env)"
+    eval "$(fnm env --shell bash)"
     fnm install --lts
 fi
 

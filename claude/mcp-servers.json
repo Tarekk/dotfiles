@@ -1,0 +1,30 @@
+{
+  "posthog": {
+    "type": "http",
+    "url": "https://mcp.posthog.com/mcp"
+  },
+  "Sanity": {
+    "type": "http",
+    "url": "https://mcp.sanity.io"
+  },
+  "vercel": {
+    "type": "http",
+    "url": "https://mcp.vercel.com"
+  },
+  "stripe": {
+    "type": "http",
+    "url": "https://mcp.stripe.com/"
+  },
+  "duckdb": {
+    "type": "stdio",
+    "command": "uvx",
+    "args": [
+      "mcp-server-motherduck",
+      "--db-path",
+      ":memory:",
+      "--read-write",
+      "--allow-switch-databases"
+    ],
+    "env": {}
+  }
+}

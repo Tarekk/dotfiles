@@ -2,14 +2,7 @@
 
 set -e
 
-DOTFILES_DIR="$HOME/.dotfiles"
-
-# ── Validate location ──────────────────────────────────────────────
-if [ "$(cd "$(dirname "$0")" && pwd)" != "$DOTFILES_DIR" ]; then
-    echo "Error: This repo must live at $DOTFILES_DIR"
-    echo "  ln -s $(cd "$(dirname "$0")" && pwd) $DOTFILES_DIR"
-    exit 1
-fi
+DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 cd "$DOTFILES_DIR"
 
@@ -20,9 +13,12 @@ elif [[ "$OSTYPE" == linux-gnu* ]]; then
     source "$DOTFILES_DIR/scripts/linux.sh"
 fi
 
+# ── Pre-stow: ensure directories exist to prevent tree folding ────
+mkdir -p "$HOME/.claude"
+
 # ── Stow packages ─────────────────────────────────────────────────
 echo "Stowing dotfiles..."
-for pkg in nvim tmux zsh git; do
+for pkg in nvim tmux zsh git claude; do
     # Back up existing files that would conflict with stow
     for f in $(stow --no --verbose --target="$HOME" "$pkg" 2>&1 | grep "existing target" | sed 's/.*: //'); do
         if [ -e "$HOME/$f" ] && [ ! -L "$HOME/$f" ]; then
@@ -69,6 +65,28 @@ if [ ! -f "$HOME/.zshrc.local" ]; then
 # export PATH="$PATH:$HOME/.pulumi/bin"
 EOF
     echo "Created ~/.zshrc.local template"
+fi
+
+# ── Claude Code plugins ───────────────────────────────────────────
+if command -v claude &> /dev/null; then
+    echo "Installing Claude Code plugins..."
+    claude plugin install typescript-lsp@claude-plugins-official 2>/dev/null || true
+    claude plugin install pyright-lsp@claude-plugins-official 2>/dev/null || true
+    claude plugin install sanity-plugin@sanity-agent-toolkit 2>/dev/null || true
+    echo "  done"
+else
+    echo "Skipping Claude Code plugins (claude not installed)"
+fi
+
+if [ ! -f "$HOME/.claude/settings.local.json" ]; then
+    cat > "$HOME/.claude/settings.local.json" <<'EOF'
+{
+  "permissions": {
+    "allow": []
+  }
+}
+EOF
+    echo "Created ~/.claude/settings.local.json template"
 fi
 
 if [ ! -f "$HOME/.gitconfig-local" ]; then

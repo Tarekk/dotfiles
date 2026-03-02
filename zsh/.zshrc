@@ -106,6 +106,13 @@ plugins=(git zsh-vi-mode)
 source $ZSH/oh-my-zsh.sh
 
 alias vim='nvim'
+alias dotfiles='make -C ~/Documents/dotfiles'
 
 # Machine-specific overrides (API keys, local paths, etc.)
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/tarekkekhia/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/tarekkekhia/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/tarekkekhia/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/tarekkekhia/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
